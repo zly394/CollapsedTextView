@@ -25,8 +25,8 @@
 
 ```
 app:collapsedLines="4"                        // 折叠行数，默认为4行
-app:expandedText="展开全文"                     // 折叠时的提示文案，默认为"展开全文"
-app:collapsedText="收起全文"                    // 展开时的提示文案，默认为"收起全文"
+app:expandedText="展开全文"                    // 折叠时的提示文案，默认为"展开全文"
+app:collapsedText="收起全文"                   // 展开时的提示文案，默认为"收起全文"
 app:tipsColor="#FF0000"                       // 提示文案的颜色，默认为linkColor
 app:tipsUnderline="false"                     // 提示文案是否有下划线，默认没有
 app:expandedDrawable="@mipmap/ic_expanded"    // 折叠时的提示图片，优先级大于文案
