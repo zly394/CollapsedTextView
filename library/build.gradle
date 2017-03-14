@@ -34,7 +34,7 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 
 publish {
     userOrg = 'zly394'
-    groupId = 'com.zly'
+    groupId = 'com.zly.widget'
     artifactId = 'collapsed-textview'
     publishVersion = '1.0.0'
     desc = 'A Collapsed TextView'
