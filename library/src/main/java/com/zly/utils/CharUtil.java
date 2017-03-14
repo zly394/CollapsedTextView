@@ -8,8 +8,8 @@ public class CharUtil {
     /**
      * 去掉空白字符，这里只去掉了尾部的空白字符
      *
-     * @param sequence
-     * @return
+     * @param sequence 需处理的字符
+     * @return 处理过的字符
      */
     public static CharSequence trimFrom(CharSequence sequence) {
         int len = sequence.length();

@@ -151,7 +151,7 @@ public class CollapsedTextView extends AppCompatTextView {
     /**
      * 设置折叠行数
      *
-     * @param collapsedLines
+     * @param collapsedLines 折叠行数
      */
     public void setCollapsedLines(@IntRange(from = 0) int collapsedLines) {
         this.mCollapsedLines = collapsedLines;
