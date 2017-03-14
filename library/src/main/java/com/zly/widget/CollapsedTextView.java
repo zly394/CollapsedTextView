@@ -355,16 +355,19 @@ public class CollapsedTextView extends AppCompatTextView {
         } else {
             spannable.append("\n");
         }
+        int tipsLen;
         if (mIsExpanded) {
             spannable.append(mCollapsedText);
             drawable = mCollapsedDrawable;
+            tipsLen = mCollapsedText.length();
         } else {
             spannable.append(mExpandedText);
             drawable = mExpandedDrawable;
+            tipsLen = mExpandedText.length();
         }
-        spannable.setSpan(new ExpandedClickableSpan(), spannable.length() - 4, spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new ExpandedClickableSpan(), spannable.length() - tipsLen, spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         if (drawable != null) {
-            spannable.setSpan(new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE), spannable.length() - 4, spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE), spannable.length() - tipsLen, spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
     }
 

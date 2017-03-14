@@ -34,6 +34,8 @@
             android:background="@android:color/white"
             android:text="修改样式\n\nHello World!\n\nHello World!\n\nHello World!\n\nHello World!"
             app:tipsColor="@color/colorPrimaryDark"
+            app:expandedText="展开"
+            app:collapsedText="收起"
             app:tipsUnderline="true" />
 
         <com.zly.widget.CollapsedTextView
