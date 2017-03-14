@@ -33,12 +33,10 @@ Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 publish {
-    userOrg = properties.getProperty("bintray.user")
+    userOrg = 'zly394'
     groupId = 'com.zly'
-    artifactId = 'CollapsedTextView'
+    artifactId = 'collapsed-textview'
     publishVersion = '1.0.0'
     desc = 'A Collapsed TextView'
     website = 'https://github.com/zly394/CollapsedTextView.git'
-    bintrayUser = properties.getProperty("bintray.user")
-    bintrayKey = properties.getProperty("bintray.key")
 }
