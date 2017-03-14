@@ -54,7 +54,6 @@ public class CollapsedTextView extends AppCompatTextView {
      * 在文本下方
      */
     public static final int BOTTOM = 1;
-
     /**
      * 提示文字展示的位置
      */
@@ -62,7 +61,6 @@ public class CollapsedTextView extends AppCompatTextView {
     @Retention(RetentionPolicy.SOURCE)
     public @interface TipsGravityMode {
     }
-
     /**
      * 折叠的行数
      */
@@ -259,11 +257,13 @@ public class CollapsedTextView extends AppCompatTextView {
         if (TextUtils.isEmpty(text) || mCollapsedLines == 0) {
             super.setText(text, type);
         } else if (mIsExpanded) {
+            // 保存原始文本，去掉文本末尾的空字符
             this.mOriginalText = CharUtil.trimFrom(text);
             formatExpandedText(type);
         } else {
+            // 保存原始文本，去掉文本末尾的空字符
             this.mOriginalText = CharUtil.trimFrom(text);
-            // 获取TextView中文字显示的宽度，需要在layout之后才能获取到，避免在列表中重复获取
+            // 获取TextView中文字显示的宽度，需要在layout之后才能获取到，避免重复获取
             if (mCollapsedLines > 0 && mShowWidth == 0) {
                 getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -291,7 +291,9 @@ public class CollapsedTextView extends AppCompatTextView {
         TextPaint paint = getPaint();
         // 文字宽度
         float textWidth;
+        // 字符数，用于最后截取字符串
         int charCount = 0;
+        // 剩余行数
         int lastLines = mCollapsedLines;
         for (int i = 0; i < paragraphs.length; i++) {
             // 每个段落
@@ -304,8 +306,9 @@ public class CollapsedTextView extends AppCompatTextView {
             if (TextUtils.isEmpty(paragraph) || textWidth % mShowWidth != 0) {
                 paragraphLines++;
             }
-            // 如果该段落行数小于等于剩余的行数，则增加currentLines，并把该段落文本添加到格式化的文本上去
             if (paragraphLines < lastLines) {
+                // 如果该段落行数小于等于剩余的行数，则减少lastLines，并增加字符数
+                // 这里只计算字符数，并不拼接字符
                 charCount += paragraph.length() + 1;
                 lastLines -= paragraphLines;
                 if (i == paragraphs.length - 1) {
@@ -313,18 +316,29 @@ public class CollapsedTextView extends AppCompatTextView {
                     break;
                 }
             } else if (paragraphLines == lastLines && i == paragraphs.length - 1) {
+                // 如果该段落行数等于剩余行数，并且是最后一个段落，表示刚好能够显示完全
                 super.setText(mOriginalText, type);
                 break;
-            } else { // 如果该段落的行数大于等于剩余的行数，则格式化该段文本
+            } else {
+                // 如果该段落的行数大于等于剩余的行数，则格式化文本
+                // 因设置的文本可能是带有样式的文本，如SpannableStringBuilder，所以根据计算的字符数从原始文本中截取
                 SpannableStringBuilder spannable = new SpannableStringBuilder(mOriginalText, 0, charCount);
+                // 计算后缀的宽度，因样式的问题对后缀的宽度乘2
                 int expandedTextWidth = 2 * (int) (paint.measureText(ELLIPSE + mExpandedText));
+                // 获取最后一段的文本，还是因为原始文本的样式原因不能直接使用paragraphs中的文本
                 CharSequence lastParagraph = mOriginalText.subSequence(charCount, charCount + paragraph.length());
-                CharSequence ellipsizeText = TextUtils.ellipsize(lastParagraph, paint, mShowWidth * lastLines - expandedTextWidth, TextUtils.TruncateAt.END);
+                // 对最后一段文本进行截取
+                CharSequence ellipsizeText = TextUtils.ellipsize(lastParagraph, paint,
+                        mShowWidth * lastLines - expandedTextWidth, TextUtils.TruncateAt.END);
                 spannable.append(ellipsizeText);
+                // 如果lastParagraph == ellipsizeText表示最后一段文本在可显示范围内，此时需要手动加上"..."
+                // 如果lastParagraph != ellipsizeText表示进行了截取TextUtils.ellipsize()方法会自动加上"..."
                 if (lastParagraph == ellipsizeText) {
                     spannable.append(ELLIPSE);
                 }
+                // 设置样式
                 setSpan(spannable);
+                // 使点击有效
                 setMovementMethod(LinkMovementMethod.getInstance());
                 super.setText(spannable, type);
                 break;
@@ -333,7 +347,7 @@ public class CollapsedTextView extends AppCompatTextView {
     }
 
     /**
-     * 格式化展开式的文本
+     * 格式化展开式的文本，直接在后面拼接即可
      *
      * @param type
      */
@@ -350,12 +364,14 @@ public class CollapsedTextView extends AppCompatTextView {
      */
     private void setSpan(SpannableStringBuilder spannable) {
         Drawable drawable;
+        // 根据提示文本需要展示的文字拼接不同的字符
         if (mTipsGravity == END) {
             spannable.append(" ");
         } else {
             spannable.append("\n");
         }
         int tipsLen;
+        // 判断是展开还是收起
         if (mIsExpanded) {
             spannable.append(mCollapsedText);
             drawable = mCollapsedDrawable;
@@ -365,9 +381,13 @@ public class CollapsedTextView extends AppCompatTextView {
             drawable = mExpandedDrawable;
             tipsLen = mExpandedText.length();
         }
-        spannable.setSpan(new ExpandedClickableSpan(), spannable.length() - tipsLen, spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        // 设置点击事件
+        spannable.setSpan(new ExpandedClickableSpan(), spannable.length() - tipsLen,
+                spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        // 如果提示的图片资源不为空，则使用图片代替提示文本
         if (drawable != null) {
-            spannable.setSpan(new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE), spannable.length() - tipsLen, spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE),
+                    spannable.length() - tipsLen, spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
     }
 
@@ -378,6 +398,7 @@ public class CollapsedTextView extends AppCompatTextView {
 
         @Override
         public void onClick(View widget) {
+            // 是否可点击
             if (mTipsClickable) {
                 mIsExpanded = !mIsExpanded;
                 setText(mOriginalText);
@@ -386,7 +407,7 @@ public class CollapsedTextView extends AppCompatTextView {
 
         @Override
         public void updateDrawState(TextPaint ds) {
-            super.updateDrawState(ds);
+            // 设置提示文本的颜色和是否需要下划线
             ds.setColor(mTipsColor == 0 ? ds.linkColor : mTipsColor);
             ds.setUnderlineText(mTipsUnderline);
         }
