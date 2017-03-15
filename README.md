@@ -1,5 +1,15 @@
 # CollapsedTextView
 
+### 使用
+
+#### Gradle
+
+```
+dependencies {
+    compile 'com.zly.widget:collapsed-textview:1.0.1'
+}
+```
+
 ### 效果图
 
 ![](https://ww3.sinaimg.cn/large/006tNbRwgy1fdmk51rek3g30900g0ndq.gif)
