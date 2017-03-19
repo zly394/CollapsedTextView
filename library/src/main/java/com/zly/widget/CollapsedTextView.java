@@ -7,6 +7,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.SpannableStringBuilder;
@@ -29,7 +30,7 @@ import java.lang.annotation.RetentionPolicy;
  * Created by zhuleiyue on 2017/3/12.
  */
 
-public class CollapsedTextView extends AppCompatTextView {
+public class CollapsedTextView extends AppCompatTextView implements View.OnClickListener {
     /**
      * 末尾省略号
      */
@@ -54,6 +55,7 @@ public class CollapsedTextView extends AppCompatTextView {
      * 在文本下方
      */
     public static final int BOTTOM = 1;
+
     /**
      * 提示文字展示的位置
      */
@@ -61,6 +63,7 @@ public class CollapsedTextView extends AppCompatTextView {
     @Retention(RetentionPolicy.SOURCE)
     public @interface TipsGravityMode {
     }
+
     /**
      * 折叠的行数
      */
@@ -109,6 +112,18 @@ public class CollapsedTextView extends AppCompatTextView {
      * 提示是否可点击
      */
     private boolean mTipsClickable;
+    /**
+     * 提示文本的点击事件
+     */
+    private ExpandedClickableSpan mClickableSpan = new ExpandedClickableSpan();
+    /**
+     * TextView的点击事件监听
+     */
+    private OnClickListener mListener;
+    /**
+     * 是否响应TextView的点击事件
+     */
+    private boolean isResponseListener = true;
 
 
     public CollapsedTextView(Context context) {
@@ -322,7 +337,10 @@ public class CollapsedTextView extends AppCompatTextView {
             } else {
                 // 如果该段落的行数大于等于剩余的行数，则格式化文本
                 // 因设置的文本可能是带有样式的文本，如SpannableStringBuilder，所以根据计算的字符数从原始文本中截取
-                SpannableStringBuilder spannable = new SpannableStringBuilder(mOriginalText, 0, charCount);
+                SpannableStringBuilder spannable = new SpannableStringBuilder();
+                if (charCount > 0) {
+                    spannable.append(mOriginalText.subSequence(0, charCount));
+                }
                 // 计算后缀的宽度，因样式的问题对后缀的宽度乘2
                 int expandedTextWidth = 2 * (int) (paint.measureText(ELLIPSE + mExpandedText));
                 // 获取最后一段的文本，还是因为原始文本的样式原因不能直接使用paragraphs中的文本
@@ -382,12 +400,27 @@ public class CollapsedTextView extends AppCompatTextView {
             tipsLen = mExpandedText.length();
         }
         // 设置点击事件
-        spannable.setSpan(new ExpandedClickableSpan(), spannable.length() - tipsLen,
+        spannable.setSpan(mClickableSpan, spannable.length() - tipsLen,
                 spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         // 如果提示的图片资源不为空，则使用图片代替提示文本
         if (drawable != null) {
             spannable.setSpan(new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE),
                     spannable.length() - tipsLen, spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+    }
+
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        this.mListener = l;
+        super.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (!isResponseListener) {
+            isResponseListener = true;
+        } else if (mListener != null) {
+            mListener.onClick(v);
         }
     }
 
@@ -398,8 +431,9 @@ public class CollapsedTextView extends AppCompatTextView {
 
         @Override
         public void onClick(View widget) {
-            // 是否可点击
+            // 是否可点击且是否未响应
             if (mTipsClickable) {
+                isResponseListener = false;
                 mIsExpanded = !mIsExpanded;
                 setText(mOriginalText);
             }
