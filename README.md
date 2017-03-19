@@ -6,7 +6,7 @@
 
 ```
 dependencies {
-    compile 'com.zly.widget:collapsed-textview:1.0.1'
+    compile 'com.zly.widget:collapsed-textview:1.0.2'
 }
 ```
 
@@ -16,7 +16,7 @@ dependencies {
 
 ```
 <com.zly.widget.CollapsedTextView
-    android:layout_width="match_parent"
+    android:layout_width="match_parent" <!-- 不能使用wrap_content -->
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     android:background="@android:color/white"
@@ -44,3 +44,10 @@ app:collapsedDrawable="@mipmap/ic_collapsed"  // 展开时的提示图片，优�
 app:tipsGravity="end"                         // 提示的位置，end(默认)--在文字末尾，bottom-在文字下面
 app:tipsClickable="true"                      // 提示是否可点击，默认不可点击
 ```
+
+### 更新说明
+
+#### v1.0.2
+
+* 修复了提示文案点击事件和TextView点击事件同时响应的BUG
+* 修复了折叠时设置带有样式的文本显示异常的BUG
