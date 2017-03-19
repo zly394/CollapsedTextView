@@ -411,6 +411,7 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
 
     @Override
     public void setOnClickListener(@Nullable OnClickListener l) {
+        // 保存TextView的点击监听事件
         this.mListener = l;
         super.setOnClickListener(this);
     }
@@ -418,8 +419,10 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
     @Override
     public void onClick(View v) {
         if (!isResponseListener) {
+            // 如果不响应TextView的点击事件，将属性置为true
             isResponseListener = true;
         } else if (mListener != null) {
+            // 如果响应TextView的点击事件且监听不为空，则响应点击事件
             mListener.onClick(v);
         }
     }
@@ -431,7 +434,7 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
 
         @Override
         public void onClick(View widget) {
-            // 是否可点击且是否未响应
+            // 是否可点击
             if (mTipsClickable) {
                 isResponseListener = false;
                 mIsExpanded = !mIsExpanded;
