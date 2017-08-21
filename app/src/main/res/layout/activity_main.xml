@@ -13,47 +13,48 @@
         tools:context="com.zly.demo.MainActivity">
 
         <com.zly.widget.CollapsedTextView
+            android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:background="@android:color/white"
             android:text="默认样式 Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World!" />
 
-        <com.zly.widget.CollapsedTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/white"
-            android:text="修改折叠行数 Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World!"
-            app:collapsedLines="5" />
+        <!--<com.zly.widget.CollapsedTextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:background="@android:color/white"-->
+            <!--android:text="修改折叠行数 Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World!"-->
+            <!--app:collapsedLines="5" />-->
 
-        <com.zly.widget.CollapsedTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/white"
-            android:text="修改样式\n\nHello World!\n\nHello World!\n\nHello World!\n\nHello World!"
-            app:tipsColor="@color/colorPrimaryDark"
-            app:expandedText="展开"
-            app:collapsedText="收起"
-            app:tipsUnderline="true" />
+        <!--<com.zly.widget.CollapsedTextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:background="@android:color/white"-->
+            <!--android:text="修改样式\n\nHello World!\n\nHello World!\n\nHello World!\n\nHello World!"-->
+            <!--app:tipsColor="@color/colorPrimaryDark"-->
+            <!--app:expandedText="展开"-->
+            <!--app:collapsedText="收起"-->
+            <!--app:tipsUnderline="true" />-->
 
-        <com.zly.widget.CollapsedTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/white"
-            android:text="修改位置\n\n\nHello World!\n\nHello World!"
-            app:tipsGravity="bottom" />
+        <!--<com.zly.widget.CollapsedTextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:background="@android:color/white"-->
+            <!--android:text="修改位置\n\n\nHello World!\n\nHello World!"-->
+            <!--app:tipsGravity="bottom" />-->
 
-        <com.zly.widget.CollapsedTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/white"
-            android:text="使用图片 Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World!"
-            app:collapsedDrawable="@mipmap/ic_collapsed"
-            app:expandedDrawable="@mipmap/ic_expanded" />
+        <!--<com.zly.widget.CollapsedTextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:background="@android:color/white"-->
+            <!--android:text="使用图片 Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World!"-->
+            <!--app:collapsedDrawable="@mipmap/ic_collapsed"-->
+            <!--app:expandedDrawable="@mipmap/ic_expanded" />-->
 
     </LinearLayout>
 </ScrollView>

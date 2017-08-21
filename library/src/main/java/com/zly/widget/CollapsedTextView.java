@@ -137,9 +137,8 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
     public CollapsedTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
-        if (!TextUtils.isEmpty(getText())) {
-            setText(getText());
-        }
+        // 使点击有效
+        setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     /**
@@ -171,7 +170,7 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
     }
 
     /**
-     * 设置折叠时的提示你好i文本
+     * 设置折叠时的提示文本
      *
      * @param expandedText 提示文本
      */
@@ -356,8 +355,6 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
                 }
                 // 设置样式
                 setSpan(spannable);
-                // 使点击有效
-                setMovementMethod(LinkMovementMethod.getInstance());
                 super.setText(spannable, type);
                 break;
             }

@@ -25,7 +25,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
 }
 
@@ -36,7 +36,7 @@ publish {
     userOrg = 'zly394'
     groupId = 'com.zly.widget'
     artifactId = 'collapsed-textview'
-    publishVersion = '1.0.2'
+    publishVersion = '1.0.3'
     desc = 'A Collapsed TextView'
     website = 'https://github.com/zly394/CollapsedTextView.git'
 }
