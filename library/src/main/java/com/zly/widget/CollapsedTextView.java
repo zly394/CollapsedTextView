@@ -302,8 +302,6 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
         String[] paragraphs = mOriginalText.toString().split("\\n");
         // 获取paint，用于计算文字宽度
         TextPaint paint = getPaint();
-        // 文字宽度
-        float textWidth;
         // 字符数，用于最后截取字符串
         int charCount = 0;
         // 剩余行数
@@ -311,17 +309,19 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
         for (int i = 0; i < paragraphs.length; i++) {
             // 每个段落
             String paragraph = paragraphs[i];
-            // 每个段落文本的宽度
-            textWidth = paint.measureText(paragraph);
-            // 计算每段的行数
-            int paragraphLines = (int) (textWidth / mShowWidth);
-            // 如果该段为空（表示空行）或还有余，多加一行
-            if (TextUtils.isEmpty(paragraph) || textWidth % mShowWidth != 0) {
+            // 段落行数
+            int paragraphLines = 0;
+            // 如果该段为空（表示空行）段落行数加一
+            if (TextUtils.isEmpty(paragraph)) {
+                paragraphLines++;
+            }
+            // 计算段落需要的行数
+            for (int index = 0; index < paragraph.length(); index += paint.breakText(paragraph, index, paragraph.length(), true, mShowWidth, null)) {
                 paragraphLines++;
             }
             if (paragraphLines < lastLines) {
                 // 如果该段落行数小于等于剩余的行数，则减少lastLines，并增加字符数
-                // 这里只计算字符数，并不拼接字符
+                // 这里只计算字符数，并不拼接字符； +1 是因为要计算换行符
                 charCount += paragraph.length() + 1;
                 lastLines -= paragraphLines;
                 if (i == paragraphs.length - 1) {
@@ -340,7 +340,7 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
                     spannable.append(mOriginalText.subSequence(0, charCount));
                 }
                 // 计算后缀的宽度，因样式的问题对后缀的宽度乘2
-                int expandedTextWidth = 2 * (int) (paint.measureText(ELLIPSE + mExpandedText));
+                int expandedTextWidth = 2 * (int) paint.measureText(ELLIPSE + mExpandedText);
                 // 获取最后一段的文本，还是因为原始文本的样式原因不能直接使用paragraphs中的文本
                 CharSequence lastParagraph = mOriginalText.subSequence(charCount, charCount + paragraph.length());
                 // 对最后一段文本进行截取
