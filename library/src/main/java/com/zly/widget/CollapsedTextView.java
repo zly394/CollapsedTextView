@@ -123,8 +123,7 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
     /**
      * 是否响应TextView的点击事件
      */
-    private boolean isResponseListener = true;
-
+    private boolean mIsResponseListener = true;
 
     public CollapsedTextView(Context context) {
         this(context, null);
@@ -403,6 +402,7 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
         if (drawable != null) {
             spannable.setSpan(new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE),
                     spannable.length() - tipsLen, spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannable.append(" ");
         }
     }
 
@@ -415,9 +415,9 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        if (!isResponseListener) {
+        if (!mIsResponseListener) {
             // 如果不响应TextView的点击事件，将属性置为true
-            isResponseListener = true;
+            mIsResponseListener = true;
         } else if (mListener != null) {
             // 如果响应TextView的点击事件且监听不为空，则响应点击事件
             mListener.onClick(v);
@@ -433,7 +433,7 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
         public void onClick(View widget) {
             // 是否可点击
             if (mTipsClickable) {
-                isResponseListener = false;
+                mIsResponseListener = false;
                 mIsExpanded = !mIsExpanded;
                 setText(mOriginalText);
             }
