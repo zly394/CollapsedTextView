@@ -10,6 +10,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -265,7 +266,7 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
     }
 
     @Override
-    public void setText(CharSequence text, final BufferType type) {
+    public void setText(final CharSequence text, final BufferType type) {
         // 如果text为空或mCollapsedLines为0则直接显示
         if (TextUtils.isEmpty(text) || mCollapsedLines == 0) {
             super.setText(text, type);
@@ -274,20 +275,18 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
             this.mOriginalText = CharUtil.trimFrom(text);
             formatExpandedText(type);
         } else {
-            // 保存原始文本，去掉文本末尾的空字符
-            this.mOriginalText = CharUtil.trimFrom(text);
             // 获取TextView中文字显示的宽度，需要在layout之后才能获取到，避免重复获取
-            if (mCollapsedLines > 0 && mShowWidth == 0) {
+            if (mShowWidth == 0) {
                 getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
                         getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         mShowWidth = getWidth() - getPaddingLeft() - getPaddingRight();
-                        formatCollapsedText(type);
+                        formatCollapsedText(type, text);
                     }
                 });
             } else {
-                formatCollapsedText(type);
+                formatCollapsedText(type, text);
             }
         }
     }
@@ -297,66 +296,50 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
      *
      * @param type ref android.R.styleable#TextView_bufferType
      */
-    private void formatCollapsedText(BufferType type) {
-        // 将原始文本按换行符拆分成段落
-        String[] paragraphs = mOriginalText.toString().split("\\n");
-        // 获取paint，用于计算文字宽度
+    private void formatCollapsedText(BufferType type, CharSequence text) {
+        // 保存原始文本，去掉文本末尾的空字符
+        this.mOriginalText = CharUtil.trimFrom(text);
+        // 获取 layout，用于计算行数
+        Layout layout = getLayout();
+        // 调用 setText 用于重置 Layout
+        if (layout == null || !layout.getText().equals(mOriginalText)) {
+            super.setText(mOriginalText, type);
+            layout = getLayout();
+        }
+        // 获取 paint，用于计算文字宽度
         TextPaint paint = getPaint();
-        // 字符数，用于最后截取字符串
-        int charCount = 0;
-        // 剩余行数
-        int lastLines = mCollapsedLines;
-        for (int i = 0; i < paragraphs.length; i++) {
-            // 每个段落
-            String paragraph = paragraphs[i];
-            // 段落行数
-            int paragraphLines = 0;
-            // 如果该段为空（表示空行）段落行数加一
-            if (TextUtils.isEmpty(paragraph)) {
-                paragraphLines++;
-            }
-            // 计算段落需要的行数
-            for (int index = 0; index < paragraph.length(); index += paint.breakText(paragraph, index, paragraph.length(), true, mShowWidth, null)) {
-                paragraphLines++;
-            }
-            if (paragraphLines < lastLines) {
-                // 如果该段落行数小于等于剩余的行数，则减少lastLines，并增加字符数
-                // 这里只计算字符数，并不拼接字符； +1 是因为要计算换行符
-                charCount += paragraph.length() + 1;
-                lastLines -= paragraphLines;
-                if (i == paragraphs.length - 1) {
-                    super.setText(mOriginalText, type);
-                    break;
-                }
-            } else if (paragraphLines == lastLines && i == paragraphs.length - 1) {
-                // 如果该段落行数等于剩余行数，并且是最后一个段落，表示刚好能够显示完全
-                super.setText(mOriginalText, type);
-                break;
+
+        int line = layout.getLineCount();
+        if (line <= mCollapsedLines) {
+            super.setText(mOriginalText, type);
+        } else {
+            // 最后一行的开始字符位置
+            int lastLineStart = layout.getLineStart(mCollapsedLines - 1);
+            // 最后一行的结束字符位置
+            int lastLineEnd = layout.getLineVisibleEnd(mCollapsedLines - 1);
+            // 计算后缀的宽度
+            int expandedTextWidth;
+            if (mTipsGravity == END) {
+                expandedTextWidth = (int) paint.measureText(ELLIPSE + " " + mExpandedText);
             } else {
-                // 如果该段落的行数大于等于剩余的行数，则格式化文本
-                // 因设置的文本可能是带有样式的文本，如SpannableStringBuilder，所以根据计算的字符数从原始文本中截取
-                SpannableStringBuilder spannable = new SpannableStringBuilder();
-                if (charCount > 0) {
-                    spannable.append(mOriginalText.subSequence(0, charCount));
-                }
-                // 计算后缀的宽度，因样式的问题对后缀的宽度乘2
-                int expandedTextWidth = 2 * (int) paint.measureText(ELLIPSE + mExpandedText);
-                // 获取最后一段的文本，还是因为原始文本的样式原因不能直接使用paragraphs中的文本
-                CharSequence lastParagraph = mOriginalText.subSequence(charCount, charCount + paragraph.length());
-                // 对最后一段文本进行截取
-                CharSequence ellipsizeText = TextUtils.ellipsize(lastParagraph, paint,
-                        mShowWidth * lastLines - expandedTextWidth, TextUtils.TruncateAt.END);
-                spannable.append(ellipsizeText);
-                // 如果lastParagraph == ellipsizeText表示最后一段文本在可显示范围内，此时需要手动加上"..."
-                // 如果lastParagraph != ellipsizeText表示进行了截取TextUtils.ellipsize()方法会自动加上"..."
-                if (lastParagraph == ellipsizeText) {
-                    spannable.append(ELLIPSE);
-                }
-                // 设置样式
-                setSpan(spannable);
-                super.setText(spannable, type);
-                break;
+                expandedTextWidth = (int) paint.measureText(ELLIPSE + " ");
             }
+            // 最后一行的宽
+            float lastLineWidth = layout.getLineWidth(mCollapsedLines - 1);
+            // 如果大于屏幕宽度则需要减去部分字符
+            if (lastLineWidth + expandedTextWidth > mShowWidth) {
+                int cutCount = paint.breakText(mOriginalText, lastLineStart, lastLineEnd, false, expandedTextWidth, null);
+                lastLineEnd -= cutCount;
+            }
+            // 因设置的文本可能是带有样式的文本，如SpannableStringBuilder，所以根据计算的字符数从原始文本中截取
+            SpannableStringBuilder spannable = new SpannableStringBuilder();
+            // 截取文本，还是因为原始文本的样式原因不能直接使用paragraphs中的文本
+            CharSequence ellipsizeText = mOriginalText.subSequence(0, lastLineEnd);
+            spannable.append(ellipsizeText);
+            spannable.append(ELLIPSE);
+            // 设置样式
+            setSpan(spannable);
+            super.setText(spannable, type);
         }
     }
 

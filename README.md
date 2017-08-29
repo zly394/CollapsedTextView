@@ -6,7 +6,7 @@
 
 ```
 dependencies {
-    compile 'com.zly.widget:collapsed-textview:1.0.2'
+    compile 'com.zly.widget:collapsed-textview:1.0.4'
 }
 ```
 
@@ -46,6 +46,10 @@ app:tipsClickable="true"                      // 提示是否可点击，默认�
 ```
 
 ### 更新说明
+
+#### v1.0.3
+
+* 修复计算行数不准确的问题
 
 #### v1.0.3
 
