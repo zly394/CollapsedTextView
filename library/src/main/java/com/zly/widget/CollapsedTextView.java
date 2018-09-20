@@ -184,7 +184,7 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
      * @param collapsedText 提示文本
      */
     public void setCollapsedText(String collapsedText) {
-        this.mCollapsedText = TextUtils.isEmpty(collapsedText) ? COLLAPSED_TEXT : collapsedText;
+        this.mCollapsedText = collapsedText == null ? COLLAPSED_TEXT : collapsedText;
     }
 
     /**
@@ -329,6 +329,9 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
             // 如果大于屏幕宽度则需要减去部分字符
             if (lastLineWidth + expandedTextWidth > mShowWidth) {
                 int cutCount = paint.breakText(mOriginalText, lastLineStart, lastLineEnd, false, expandedTextWidth, null);
+                while (paint.measureText(mOriginalText.subSequence(lastLineStart, lastLineEnd - cutCount) + ELLIPSE + " " + mExpandedText) > mShowWidth) {
+                    cutCount++;
+                }
                 lastLineEnd -= cutCount;
             }
             // 因设置的文本可能是带有样式的文本，如SpannableStringBuilder，所以根据计算的字符数从原始文本中截取
