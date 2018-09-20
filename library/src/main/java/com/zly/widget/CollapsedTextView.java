@@ -39,15 +39,15 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
     /**
      * 默认的折叠行数
      */
-    public static final int COLLAPSED_LINES = 3;
+    public static final int COLLAPSED_LINES = 4;
     /**
      * 折叠时的默认文本
      */
-    private static final String EXPANDED_TEXT = "展开";
+    private static final String EXPANDED_TEXT = "展开全文";
     /**
      * 展开时的默认文本
      */
-    private static final String COLLAPSED_TEXT = "收起";
+    private static final String COLLAPSED_TEXT = "收起全文";
     /**
      * 在文本末尾
      */
@@ -184,7 +184,7 @@ public class CollapsedTextView extends AppCompatTextView implements View.OnClick
      * @param collapsedText 提示文本
      */
     public void setCollapsedText(String collapsedText) {
-        this.mCollapsedText = collapsedText;
+        this.mCollapsedText = collapsedText == null ? COLLAPSED_TEXT : collapsedText;
     }
 
     /**
